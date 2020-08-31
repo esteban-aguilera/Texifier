@@ -1,0 +1,721 @@
+\documentclass[lettersize, 11pt, tikz]{report}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[left=2.0cm, right=2.0cm, top=2.0cm, bottom=2.0cm]{geometry}
+
+
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[toc, page]{appendix}
+\usepackage{bbold}
+\usepackage{breqn}
+\usepackage{caption}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{empheq}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{indentfirst}
+\usepackage{subcaption}
+\usepackage{url}
+
+
+\usepackage{parskip}
+\setlength{\parskip}{0pt}
+\setlength{\parindent}{20pt}
+
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.13}
+
+
+\usepackage{tikz}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{shapes.misc}
+\tikzset{
+    dot/.style = {circle,fill,inner sep=1pt},
+    cross/.style = {cross out, draw=black, inner sep=1pt}
+}
+
+
+\usepackage{imakeidx}
+\makeindex
+
+% DEFINE COLORS
+\definecolor{DarkRed}{RGB}{120,20,20}
+\definecolor{DarkGreen}{RGB}{20,120,20}
+\definecolor{DarkBlue}{RGB}{20,20,120}
+\definecolor{LightRed}{RGB}{250,200,200}
+\definecolor{LightGreen}{RGB}{200,250,200}
+\definecolor{LightBlue}{RGB}{200,200,250}
+
+
+\usepackage{hyperref}
+\hypersetup{
+    pdfstartview={FitH},
+    colorlinks=true,
+    linkcolor=DarkBlue,
+    filecolor=DarkBlue,
+    urlcolor=DarkBlue,
+    citecolor=DarkRed,
+}
+
+\usepackage[most]{tcolorbox}
+\newcommand*\RedBox[1]{\tcboxmath[colback=LightRed,colframe=DarkRed]{#1}}
+\newcommand*\GreenBox[1]{\tcboxmath[colback=LightGreen,colframe=DarkGreen]{#1}}
+\newcommand*\BlueBox[1]{\tcboxmath[colback=LightBlue,colframe=DarkBlue]{#1}}
+
+\usepackage{cancel}
+\renewcommand\CancelColor{\color{red}}
+
+
+% ADD LINE OVER FOOTNOTE
+\makeatletter
+\def\footnoterule{\kern-3\p@ \hrule \@width 5cm \kern 2.6\p@}
+\makeatother
+
+
+\newcounter{exercise}
+\NewDocumentEnvironment{exercise}{ O{} }
+{
+\newtcolorbox[use counter=exercise]{testexercisebox}{
+    empty,
+    title={Exercise \thetcbcounter: #1},
+    attach boxed title to top left,
+   minipage boxed title,
+    boxed title style={empty,size=minimal,toprule=0pt,top=4pt,left=3mm,overlay={}},
+    coltitle=DarkRed,fonttitle=\bfseries,
+    before=\par\medskip\noindent,parbox=false,boxsep=0pt,left=3mm,right=0mm,top=2pt,breakable,pad at break=0mm,
+    before upper=\csname @totalleftmargin\endcsname0pt,
+    overlay unbroken={\draw[DarkRed,line width=.5pt] ([xshift=-0pt]title.north west) -- ([xshift=-0pt]frame.south west); },
+    overlay first={\draw[DarkRed,line width=.5pt] ([xshift=-0pt]title.north west) -- ([xshift=-0pt]frame.south west); },
+    overlay middle={\draw[DarkRed,line width=.5pt] ([xshift=-0pt]frame.north west) -- ([xshift=-0pt]frame.south west); },
+    overlay last={\draw[DarkRed,line width=.5pt] ([xshift=-0pt]frame.north west) -- ([xshift=-0pt]frame.south west); },%
+    }
+\begin{testexercisebox}}
+{\end{testexercisebox}\endlist}
+
+
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\roman{subsection}.}
+
+
+
+
+
+
+
+
+
+
+\begin{document}
+
+\chapter{Quantum Mechanics}
+
+
+% --------------------------------------------------------------------------------
+\section{Schrödinger's picture}
+
+In the Schrödinger picture we have that the state vectors are the one who evolve.  The time evolution is given by the Schrödinger equation:
+\begin{align}
+    \label{eq:abstract-schrodinger}
+    \ii \hbar \partial{\ket{\psi(t)}}{t} = \H(t) \ket{\psi(t)}
+    \text{ .}
+\end{align}
+
+\newpar
+Considering that the system is composed of any number of particles, we have that the state vectors can be written in position space as the linear combination of each of this possibilities\footnote{For bras and kets we will use the notation of \cite{negele2018quantum}.} as
+\begin{align}
+    \label{eq:N-body-state}
+    \ket{\psi(t)} = \sum_{N=0}^\infty \int \psi_N(x_1,...,x_N,t) \ket{x_1,...,x_N} \d x_1 ... \d x_N
+    \text{ ,}
+\end{align}
+which can be used to project the many-body Schrödinger equation into position space to obtain:
+\begin{align}
+    \label{eq:many-body-state}
+    \ii \hbar \partial{\psi_N(x_1,...,x_N, t)}{t} =
+        \sum_{M=0}^\infty \int \psi_M(x_1',...,x_M',t) \bra{x_1,...,x_N,t} \H(t) \ket{x_1',...,x_M',t} \d x_1' ... \d x_M'
+    \text{ .}
+\end{align}
+
+\newpar
+Integrating over time, we have that the solution to Schrödinger equation can be written in terms of the time evolution operator as:
+\begin{align}
+    \label{eq:schrodinger-time-evolution}
+    \ket{\psi(t)} &= U(t,t_r) \ket{\psi(t_r)}
+    \text{ ,}
+\end{align}
+with
+\begin{align}
+    \label{eq:time-evolution-definition}
+    U &= \T{ \exp\bigg({-\frac{\ii}{\hbar} \int_{t_r}^t \H(t') \d t'}\bigg) \ket{\psi(t_r)} }
+    \text{ ,}
+\end{align}
+where $T$ is the time-ordering operator, which is defined as:
+\begin{align}
+    \label{eq:time-ordering-definition}
+    \T{ A(t_2) B(t_1) } &= \begin{cases}
+        A(t_2) B(t_1)       & \text{, if } t_1 < t_2  \\
+        \zeta B(t_2) A(t_1) & \text{, if } t_2 < t_1
+    \end{cases}
+    \text{ ,}
+\end{align}
+where $\zeta = +1$ for bosons (or any other operator) and $\zeta = -1$ for fermions.
+
+
+
+
+
+
+
+
+
+
+% --------------------------------------------------------------------------------
+\section{Heisenberg's picture}
+In Heisenberg's picture, its the operators the mathematical objects that evolve in time, not the wave function.  To transform an operator $A$ and wavefunction $\ket{\psi(t)}$ from Schrödinger's picture to Heisenberg's picture we must use the following transformations:
+\begin{subequations}
+    \label{eq:heisenberg-picture}
+    \begin{align}
+        \ket{\psi_{\H}} &\equiv U\dagg(t, t_r) \ket{\psi(t)} = \ket{\psi(t_r)}
+        \\
+        A_{\H}(t) &\equiv U\dagg(t, t_r) ~ A ~ U(t, t_r)
+        \text{ ,}
+    \end{align}
+\end{subequations}
+where the equation of motions for the operators are:
+\begin{align}
+    \label{eq:heisenberg-time-evolution}
+    \ii\hbar \partial{A_{\H}(t)}{t} = [A_{\H}(t), \H_{\H}(t)]
+    \text{ .}
+\end{align}
+
+\newpar
+As Bose and Fermi fields are operators, they can be expressed in Heisenberg's picture.  For this fields, we have that the (anti)commutation relations at equal times are:
+\begin{align}
+    \label{eq:field-operators-commutators}
+    [\psi_{\H}(\bm{x},t), \psi_{\H}(\bm{x'},t)]_{-\zeta} = \delta(\bm{x} - \bm{x'})
+    \text{ ,}
+\end{align}
+while for unequal times the relations are much more complicated because of the interactions.
+
+
+
+\begin{exercise}
+    Find the expression for the continuity equation and the probabily current by considering that the system is described by the following many-body Hamiltonian:
+    \begin{align}
+        \label{ex-1:many-body-hamiltonian}
+        \H &= \int\d\bm{x}~
+            \psi_{\H}\dagg(\bm{x},t) \Bigg[ \frac{1}{2m} \bigg( \frac{\hbar}{\ii}\nabla
+                - q\bm{A}(\bm{x},t) \bigg)^2 + q \phi(\bm{x},t) \Bigg] \psi_{\H}(\bm{x},t)
+            \nonumber \\ &
+            + \frac{1}{2} \int\d\bm{x} \int\d\bm{x'}~
+                \psi_{\H}\dagg(\bm{x},t) \psi_{\H}\dagg(\bm{x'},t) V(\bm{x},\bm{x'}) \psi_{\H}(\bm{x'},t) \psi_{\H}(\bm{x},t)
+            \text{ .}
+    \end{align}
+
+    \noindent
+    To find the continuity equation, we must start by calculating the equation of motion using equations \ref{eq:heisenberg-time-evolution} and \ref{eq:field-operators-commutators}:
+    \begin{subequations}
+        \label{ex-1:field-operators-evolution}
+        \begin{align}
+            \ii\hbar \partial{\psi_{\H}(t)}{t} &=
+                \Bigg[ \frac{1}{2m} \bigg( \frac{\hbar}{\ii}\nabla - q\bm{A}(\bm{x},t) \bigg)^2 + q \phi(\bm{x},t) \Bigg]  \psi_{\H}(\bm{x},t)
+                \nonumber \\ &
+                + \int\d\bm{x'}~ \psi_{\H}\dagg(\bm{x'},t) V(\bm{x},\bm{x'}) \psi_{\H}(\bm{x'},t) \psi_{\H}(\bm{x},t)
+            \text{ ,}  \\
+            \ii\hbar \partial{\psi_{\H}\dagg(t)}{t} &=
+                -\Bigg[ \frac{1}{2m}\bigg( \frac{\hbar}{\ii}\nabla + q\bm{A}(\bm{x},t) \bigg)^2 + q \phi(\bm{x},t) \Bigg]  \psi_{\H}\dagg(\bm{x},t)
+                \nonumber \\ &
+                - \int\d\bm{x'}~ \psi_{\H}\dagg(\bm{x},t) \psi_{\H}\dagg(\bm{x'},t) V(\bm{x},\bm{x'}) \psi_{\H}(\bm{x'},t)
+            \text{ .}
+        \end{align}
+    \end{subequations}
+
+    \noindent
+    Now we can replace both equations into the time derivative of the particle density to obtain the continuity equation:
+    \begin{align}
+        \label{ex-1:continuity-equation}
+        \partial{\big|\psi_{\H}\big|^2}{t} &=
+            \bigg(-\ii\hbar \partial{\psi_{\H}\dagg(t)}{t}\bigg)
+                \bigg(\frac{\ii}{\hbar}\psi_{\H}\bigg)
+            + \bigg(-\frac{\ii}{\hbar}\psi_{\H}\dagg\bigg)
+                \bigg(\ii\hbar \partial{\psi_{\H}(t)}{t}\bigg)
+        \nonumber \\
+        \Rightarrow \partial{\big|\psi_{\H}\big|^2}{t} &=
+            \frac{\ii}{2m\hbar} \Bigg[
+                - \hbar^2 \nabla^2 \psi_{\H}\dagg ~ \psi_{\H}
+                + \frac{\hbar q}{\ii} \nabla \cdot \big( \bm{A} \psi_{\H}\dagg \big) ~ \psi_{\H}
+                + \frac{\hbar q}{\ii} \bm{A} \cdot \nabla \psi_{\H}\dagg ~ \psi_{\H}
+                + \cancel{ q^2 \bm{A}^2 \psi_{\H}\dagg \psi_{\H} }
+            \nonumber \\ &
+                + \hbar^2 \psi_{\H}\dagg \nabla^2 \psi_{\H}
+                + \frac{\hbar q}{\ii} \psi_{\H}\dagg ~ \nabla \cdot \big( \bm{A} \psi_{\H} \big)
+                + \frac{\hbar q}{\ii} \psi_{\H}\dagg ~ \bm{A} \cdot \nabla \psi_{\H}
+                - \cancel{ q^2 \bm{A}^2 \psi_{\H}\dagg \psi_{\H} }
+            \Bigg]
+        \\
+        \Rightarrow \partial{\big|\psi_{\H}\big|^2}{t} &=
+            \nabla \cdot \Bigg[
+                \frac{-\hbar}{2m \ii} \bigg( \psi_{\H}\dagg (\bm{x},t) \nabla \psi_H(\bm{x},t) - \nabla \psi_H\dagg(\bm{x},t) \psi_{\H} (\bm{x},t) \bigg)
+                + \frac{q\bm{A}(\bm{x},t)}{m} \Big| \psi_H(\bm{x},t) \Big|^2
+            \Bigg]
+        \text{ .}
+    \end{align}
+
+    \noindent
+    Where we can define the probability current as:
+    \begin{empheq}[box=\RedBox]{align}
+        \label{ex-1:probability-current}
+        \bm{j}(\bm{x},t) = \frac{\hbar}{2m\ii} \bigg(
+            \psi_{\H}\dagg (\bm{x},t) \nabla \psi_H(\bm{x},t) - \nabla \psi_H\dagg(\bm{x},t) \psi_{\H} (\bm{x},t)
+        \bigg)
+        - \frac{q\bm{A}(\bm{x},t)}{m} \Big| \psi_H(\bm{x},t) \Big|^2
+        \text{ .}
+    \end{empheq}
+\end{exercise}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\chapter{Introduction to Green's functions}
+
+% --------------------------------------------------------------------------------
+\section{Definitions}
+The single-particle Green's function allows us to understand the propagation of adding or removing particles in the material's \textit{vacuum}.  They are useful and important because many observables can be written in term of the Green's functions.  The Green's functions we will be dealing with are:
+
+\newpar
+\textbf{G-lesser}:
+\begin{align}
+    \label{eq:G-lesser}
+    G^<(\bm{x},t,\bm{x'},t')
+        &= -\ii \zeta \braket{\psi_{\H}\dagg(\bm{x},t) \psi_{\H}(\bm{x'},t')}
+\end{align}
+
+\textbf{G-greater}:
+\begin{align}
+    \label{eq:G-greater}
+    G^>(\bm{x},t,\bm{x'},t')
+        &= - \ii \braket{\psi_{\H}(\bm{x},t) \psi_{\H}\dagg(\bm{x'},t')}
+\end{align}
+
+\textbf{G-retarded}:
+\begin{align}
+    \label{eq:G-retarded}
+    G^R(\bm{x},t,\bm{x'},t') &= -\ii \theta(t-t') \braket{\big[\psi_{\H}(\bm{x},t), \psi_{\H}\dagg(\bm{x'},t')\big]_{-\zeta}}
+    \nonumber \\ &
+    = \theta(t-t') \Big( G^>(\bm{x},t,\bm{x'},t') - G^<(\bm{x},t,\bm{x'},t') \Big)
+\end{align}
+
+\textbf{G-advanced}:
+\begin{align}
+    \label{eq:G-advanced}
+    G^A(\bm{x},t,\bm{x'},t') &= \ii \theta(t'-t) \braket{\big[\psi_{\H}(\bm{x},t), \psi_{\H}\dagg(\bm{x'},t')\big]_{-\zeta}}
+    \nonumber \\ &
+    = -\theta(t'-t) \Big( G^>(\bm{x},t,\bm{x'},t') - G^<(\bm{x},t,\bm{x'},t') \Big)
+\end{align}
+
+\textbf{G-Keldysh}:
+\begin{align}
+    \label{eq:G-Keldysh}
+    G^K(\bm{x},t,\bm{x'},t') &= -\ii \braket{\big[\psi_{\H}(\bm{x},t), \psi_{\H}\dagg(\bm{x'},t')\big]_{\zeta}}
+    \nonumber \\ &
+    =  G^>(\bm{x},t,\bm{x'},t') + G^<(\bm{x},t,\bm{x'},t')
+\end{align}
+
+\textbf{time-ordered Green's function}:
+\begin{align}
+    \label{eq:G-time-ordered}
+    G(\bm{x},t,\bm{x'},t') &= - \ii \left\langle \T{ \psi_{\H}(\bm{x},t) \psi_{\H}\dagg(\bm{x'},t') } \right\rangle
+    \nonumber \\ &
+    =  \theta(t-t')G^>(\bm{x},t,\bm{x'},t') + \theta(t'-t)G^<(\bm{x},t,\bm{x'},t')
+\end{align}
+
+\textbf{anti-time-ordered Green's function}:
+\begin{align}
+    \label{eq:G-anti-time-ordered}
+    \bar{G}(\bm{x},t,\bm{x'},t') &= - \ii \left\langle \bar{T}\Big(\psi_{\H}(\bm{x},t) \psi_{\H}\dagg(\bm{x'},t') \Big) \right\rangle
+    \nonumber \\ &
+    =  \theta(t-t')G^<(\bm{x},t,\bm{x'},t') + \theta(t'-t)G^>(\bm{x},t,\bm{x'},t')
+\end{align}
+
+\newpar
+Where every quantum number is implicitly included in the spatial coordinates $\bm{x}$ and $\bm{x'}$.  In the literature it is common to see the notation where $1 \equiv (\bm{x}_1, t_1)$, which can be used to write the Green's functions as $G^<(1,1') = -\ii \zeta \braket{\psi_{\H}\dagg(1) \psi_{\H}(1')}$.
+
+
+\newpar
+Another important function is the \textbf{spectral function}, which is defined as:
+\begin{align}
+    \label{eq:spectral-function}
+    A(\bm{x},t,\bm{x'},t') &= \ii \Big( G^R(\bm{x},t,\bm{x'},t') - G^A(\bm{x},t,\bm{x'},t') \Big)
+    \nonumber \\ &
+    = \ii \Big( G^>(\bm{x},t,\bm{x'},t') - G^<(\bm{x},t,\bm{x'},t') \Big)
+    \text{ .}
+\end{align}
+
+
+
+
+
+
+
+% --------------------------------------------------------------------------------
+\section{General Properties}
+From the above definitions it is straight-forward to show the following relations:
+\begin{align*}
+    G^A(\bm{x},t,\bm{x'},t') &=
+        \ii \theta(t'-t) \braket{\big[\psi_{\H}(\bm{x},t), \psi_{\H}\dagg(\bm{x'},t')\big]_{-\zeta}}
+        =
+        \Big( - \ii \theta(t'-t) \braket{\big[\psi_{\H}(\bm{x'},t'), \psi\dagg_{\H}(\bm{x},t)\big]_{-\zeta}}  \Big)^*
+\end{align*}
+\begin{empheq}[box=\RedBox]{align}
+    G^A(\bm{x},t,\bm{x'},t') &= \Big( G^R(\bm{x'},t',\bm{x},t) \Big)^*
+\end{empheq}
+
+
+\begin{align*}
+    G^K(\bm{x},t,\bm{x'},t') &=
+        -\ii \braket{\big[\psi_{\H}(\bm{x},t), \psi_{\H}\dagg(\bm{x'},t')\big]_{\zeta}}
+        =
+        \Big( \ii \braket{\big[\psi_{\H}(\bm{x'},t'), \psi\dagg_{\H}(\bm{x},t)\big]_{\zeta}} \Big)^*
+\end{align*}
+\begin{empheq}[box=\RedBox]{align}
+    G^K(\bm{x},t,\bm{x'},t') &= - \Big( G^K(\bm{x'},t',\bm{x},t) \Big)^*
+\end{empheq}
+
+
+\begin{align*}
+    G^<(\bm{x},t,\bm{x'},t') &=
+        -\ii \zeta \braket{\psi_{\H}\dagg(\bm{x},t) \psi_{\H}(\bm{x'},t')}
+        = \Big(\ii \zeta \braket{ \psi\dagg_{\H}(\bm{x'},t') \psi_{\H}(\bm{x},t) } \Big)^* 
+\end{align*}
+\begin{empheq}[box=\RedBox]{align}
+    G^<(\bm{x},t,\bm{x'},t') &= - \Big( G^<(\bm{x'},t',\bm{x},t) \Big)^*
+\end{empheq}
+
+
+\begin{align*}
+    G^>(\bm{x},t,\bm{x'},t') &=
+        -\ii \braket{\psi_{\H}(\bm{x},t) \psi\dagg_{\H}(\bm{x'},t')}
+        = \Big(\ii \braket{ \psi_{\H}(\bm{x'},t') \psi\dagg_{\H}(\bm{x},t) } \Big)^* 
+\end{align*}
+\begin{empheq}[box=\RedBox]{align}
+    G^>(\bm{x},t,\bm{x'},t') &= - \Big( G^>(\bm{x'},t',\bm{x},t) \Big)^*
+\end{empheq}
+
+
+\begin{align*}
+    A(\bm{x},t,\bm{x'},t') &=
+        \ii \Big( G^>(\bm{x},t,\bm{x'},t') - G^<(\bm{x},t,\bm{x'},t') \Big)
+        = \Big(- \ii \Big( G^>(\bm{x},t,\bm{x'},t') - G^<(\bm{x},t,\bm{x'},t') \Big)^* \Big)^* 
+\end{align*}
+\begin{empheq}[box=\RedBox]{align}
+    A(\bm{x},t,\bm{x'},t') &= \Big( A(\bm{x'},t',\bm{x},t) \Big)^*
+\end{empheq}
+
+
+
+
+
+
+
+
+% --------------------------------------------------------------------------------
+\section{Observables}
+As it was previously said, observables can be written in terms of the Green's functions.  For example, the particle density and electric current density can be written as:
+\begin{empheq}[box=\GreenBox]{align}
+    \label{eq:particle-density-G}
+    n(\bm{x},t) = \ii \zeta \sum_{\sigma_z} G^<(\bm{x},t,\bm{x'},t')
+    \text{ ,}
+\end{empheq}
+\begin{empheq}[box=\GreenBox]{align}
+    \label{eq:particle-current-G}
+    \bm{j}(\bm{x},t) = - \zeta \frac{q\hbar}{2m}
+        \sum_{\sigma_z} \Big(\partial[\bm{x']} - \partial[\bm{x}]\Big)G^<(\bm{x},t,\bm{x'},t') \bigg|_{\bm{x'}=\bm{x}}
+        \nonumber \\
+        - \ii \zeta \frac{q^2 \bm{A}}{m} \sum_{\sigma_z} G^<(\bm{x},t,\bm{x'},t')
+    \text{ .}
+\end{empheq}
+
+
+
+
+
+% --------------------------------------------------------------------------------
+\section{Equation of motion}
+
+It can be directly seen that for the time-ordered Gren's function we have that
+\begin{align}
+    \ii\hbar\partial{t} G(\bm{x},t,\bm{x'},t') &=
+        \hbar \partial{t} \Big( \theta(t - t')
+                \braket{ \psi_{\H}(\bm{x},t)\psi\dagg_{\H}(\bm{x'},t') }
+        \Big)
+        + \zeta \hbar \partial{t} \Big( \theta(t'-t)
+                \braket{ \psi\dagg_{\H}(\bm{x'},t')\psi_{\H}(\bm{x},t) }
+        \Big)
+        \nonumber \\ &
+        = \hbar \delta(t-t')
+            \braket{ \psi_{\H}(\bm{x},t)\psi\dagg_{\H}(\bm{x'},t') }
+        + \hbar \theta(t-t')
+            \braket{ \partial{t}\psi_{\H}(\bm{x},t)\dagg_{\H}(\bm{x'},t') }
+        \nonumber \\ &
+        - \zeta \hbar \delta(t'-t)
+            \braket{ \psi\dagg_{\H}(\bm{x'},t')\psi_{\H}(\bm{x},t) }
+        + \zeta \hbar \theta(t'-t)
+            \braket{ \psi\dagg_{\H}(\bm{x'},t')\partial{t}\psi_{\H}(\bm{x},t) }
+        \nonumber \\ &
+        = \hbar \delta(t-t')\delta(\bm{x}-\bm{x'})
+        - \ii \braket{ \T{ \ii \hbar
+                    \partial{t}\psi_{\H}(\bm{x},t) \psi\dagg_{\H}(\bm{x'},t')
+        } }
+    \text{ ,}
+\end{align}
+where we can use equation \ref{eq:heisenberg-time-evolution} to note that the equation of motion for the field operator is
+\begin{align}
+    \ii\hbar\partial{t} \psi_{\H}(\bm{x},t) &=
+        \Big( H_0\Big(-\ii \hbar \partial_{\bm{x}},\bm{x},t\Big)-\mu \Big) \psi_{\H}(\bm{x},t)
+        + \Big[\psi_{\H}(\bm{x},t), \Hi_{\H}(t) \Big]
+    \text{ ,}
+\end{align}
+which can be used to simply the result into
+\begin{align}
+    \ii\hbar\partial{t} G(\bm{x},t,\bm{x'},t') &=
+        \hbar \delta(t-t')\delta(\bm{x}-\bm{x'})
+        - \ii \Big( H_0\Big(-\ii \hbar \partial_{\bm{x}},\bm{x},t\Big)-\mu \Big) \braket{ \T{\psi_{\H}(\bm{x},t) \psi\dagg_{\H}(\bm{x'},t') } }
+    \nonumber  \\ &
+        - \ii \braket{ \T{ \Big[\psi_{\H}(\bm{x},t), \Hi_{\H}(\bm{x},t) \Big]  \psi\dagg_{\H}(\bm{x'},t') }}
+\end{align}
+\begin{empheq}[box=\RedBox] {align}
+    \label{eq:G-time-evolution}
+    \bigg(\ii\hbar \partial{t} - H_0\Big(-\ii \hbar \partial_{\bm{x}},\bm{x},t\Big) + \mu\bigg)G(\bm{x},t,\bm{x},t')
+    &= \hbar \delta(\bm{x}-\bm{x'})\delta_c(t-t')
+    \nonumber \\ &
+    - \ii \braket{\T{ \Big[\psi(\bm{x},t), \Hi_{\H}(\bm{x},t)\Big] \psi\dagg(\bm{x'},t') }}
+    \text{ .}
+\end{empheq}
+
+
+
+
+
+
+
+% --------------------------------------------------------------------------------
+\section{Free Green's function}
+
+In this section we will consider a Hamiltonian without interacting term $\Hi$.  This turns equation \ref{eq:G-time-evolution} into
+\begin{align}
+    G_0^{-1}(\bm{x},t) G(\bm{x},t,\bm{x},t') &= \hbar \delta(\bm{x}-\bm{x'})\delta_c(t-t')
+\end{align}
+where
+\begin{align}
+    \label{eq:G-free-definition}
+    G_0^{-1}(\bm{x},t) &= \bigg(\ii\hbar \partial{t} - H_0\Big(-\ii \hbar \partial_{\bm{x}},\bm{x},t\Big) + \mu\bigg)
+\end{align}
+
+\newpar
+Introducing the two-poing free Green's function as
+\begin{align}
+    \label{eq:two-point-G-free}
+    G_0^{-1}(\bm{x},t,\bm{x'},t') = G_0^{-1}(\bm{x},t) \delta(\bm{x}-\bm{x'}) \delta(t-t')
+    \text{ ,}
+\end{align}
+and the following product \cite{rammer1986quantum}:
+\begin{empheq}[box=\BlueBox]{align}
+    \label{eq:otimes-definition}
+    \big(A \otimes B\big) (\bm{x},t,\bm{x'},t') = \int \d \bm{x}_2 \int \d t_2 ~ A(\bm{x},t,\bm{x_2},t_2) B(\bm{x_2},t_2,\bm{x'},t')
+    \text{ ,}
+\end{empheq}
+we obtain that equation \ref{eq:G-time-evolution} can be written as
+\begin{align}
+    \big(G_0^{-1} \otimes G_0\big) (\bm{x},t,\bm{x'},t') &
+    = \int \d \bm{x}_2 \int \d t_2 ~ G_0^{-1}(\bm{x},t,\bm{x_2},t_2)  G_0(\bm{x_2},t_2,\bm{x'},t')
+    \nonumber \\  &
+    = \int \d \bm{x}_2 \int \d t_2 ~ G_0^{-1}(\bm{x},t) \delta(\bm{x}-\bm{x_2}) \delta(t-t_2)   G_0(\bm{x_2},t_2,\bm{x'},t')
+    \nonumber \\ &
+    = G_0^{-1}(\bm{x},t) G_0(\bm{x},t,\bm{x'},t')
+\end{align}
+\begin{empheq}[box=\RedBox]{align}
+    \label{eq:G-otimes}
+    \big(G_0^{-1} \otimes G_0\big) (\bm{x},t,\bm{x'},t') = \hbar \delta(\bm{x}-\bm{x'}) \delta(t-t')
+    \text{ .}
+\end{empheq}
+
+\newpar
+The free Green's functions can also be seen to satisfy the following useful relations:
+\begin{subequations}
+    \label{eq:G-free-properties}
+    \begin{align}
+        G_0^{-1}(\bm{x},t) G_0^<(\bm{x},t,\bm{x'},t') &= 0
+        \text{ ,}  \\
+        G_0^{-1}(\bm{x},t) G_0^>(\bm{x},t,\bm{x'},t') &= 0
+        \text{ ,}  \\
+        G_0^{-1}(\bm{x},t) \bar{G}_0(\bm{x},t,\bm{x'},t') &= -\hbar \delta(\bm{x}-\bm{x'}) \delta(t - t')
+        \text{ ,}
+    \end{align}
+\end{subequations}
+
+
+
+% --------------------------------------------------------------------------------
+\section{Equilibrium Green's functions}
+In equilibrium we have that the thermal average in the canonical ensemble is given by
+\begin{align}
+    \label{eq:average-definition}
+    \braket{\cdots} = \frac{1}{ \Tr{e^{-\beta H}} }  \Tr{e^{-\beta H} \cdots}
+    \text{ .}
+\end{align}
+Which can be used in combination of the cyclic property of the trace to obtain:
+\begin{align}
+    \braket{\psi_{H}(\bm{x},t) \psi_{H}\dagg(\bm{x'},t')} &=
+        \frac{1}{ \Tr{e^{-\beta H}} }  \Tr{e^{-\beta H} \psi_{H}(\bm{x},t) \psi_{H}\dagg(\bm{x'},t') }
+        \nonumber \\
+        &= \frac{1}{ \Tr{e^{-\beta H}} }
+            \Tr{e^{-\beta H} \SchrodingerPicture{\psi}{H} ~ e^{\beta H} e^{-\beta H} ~ \psi_{H}\dagg(\bm{x'},t') }
+        \nonumber \\
+        &= \frac{1}{ \Tr{e^{-\beta H}} }
+            \Tr{\psi_{H}(\bm{x},t+\ii\hbar\beta) ~ e^{-\beta H} ~ \psi_{H}\dagg(\bm{x'},t') }
+        \nonumber \\
+        &= \braket{\psi_{H}\dagg(\bm{x'},t') \psi_{H}(\bm{x},t+\ii\hbar\beta)}
+        \text{ .}
+\end{align}
+\begin{empheq}[box=\GreenBox]{align}
+    \label{eq:G-canonical-greater-lesser}
+    G^<(\bm{x},t+\ii\hbar\beta,\bm{x'},t') = \zeta ~ G^>(\bm{x},t,\bm{x'},t')
+    \text{ .}
+\end{empheq}
+
+\newpar
+In the case of the grand canonical ensemble and assuming that the Hamiltonian commutes with the number operator, we can see that
+\begin{align}
+    &\braket{\psi_H(\bm{x},t-\ii\hbar\beta)  \psi_{H}\dagg(\bm{x'},t')}
+    = \Tr[\Bigg]{ \frac{e^{-\beta(H-\mu N)}}{\Tr[\big]{e^{-\beta(H-\mu N)}} }
+        \psi_{H}(\bm{x},t-\ii\hbar\beta) \psi_{H}\dagg(\bm{x'},t')}
+    \nonumber \\
+    &= \Tr[\Bigg]{ \frac{e^{-\beta(H-\mu N)}}{\Tr[\big]{e^{-\beta(H-\mu N)}} }
+        \SchrodingerPicture[t_r][t-\ii\hbar\beta]{\psi(\bm{x})}{H} e^{\beta(H-\mu N)} e^{-\beta(H-\mu N)} \psi_{H}\dagg(\bm{x'},t')}
+    \nonumber \\
+    &= \Tr[\Bigg]{ e^{\beta \mu N} \SchrodingerPicture[t_r][t]{\psi(\bm{x})}{H} e^{-\beta \mu N}
+        \frac{e^{-\beta(H-\mu N)}}{\Tr[\big]{e^{-\beta(H-\mu N)}} } \psi_{H}\dagg(\bm{x'},t')}
+    \nonumber \\
+    &= \Tr[\Bigg]{ e^{\beta \mu N} \psi_{H}(\bm{x},t) e^{-\beta \mu N}
+        \frac{e^{-\beta(H-\mu N)}}{\Tr[\big]{e^{-\beta(H-\mu N)}} } \psi_{H}\dagg(\bm{x'},t')}
+    \nonumber \\
+    &= e^{-\beta \mu}
+        \braket{\psi_{H}\dagg(\bm{x'},t') \psi_H(\bm{x},t)}
+    \text{ .}
+\end{align}
+\begin{empheq}[box=\GreenBox]{align}
+    \label{eq:G-grand-canonical-greater-lesser}
+    G^>(\bm{x},t-\ii\hbar\beta,\bm{x'},t') = \zeta e^{-\beta \mu} ~ G^<(\bm{x'},t',\bm{x},t)
+    \text{ .}
+\end{empheq}
+
+\newpar
+In thermal equilibrium we have that the correlation funcitons can only depend on the difference between the times $t - t'$.  If we also consider an equilibrium state that is translationally invariant, we have that \textbf{all Green's functions} can be fourier transformed as
+\begin{align}
+    \label{eq:G-equilibrium-fourier}
+    G(\bm{x},t,\bm{x'},t') = \int \frac{\d\bm{p}}{(2\pi\hbar)^3} \int \frac{\d E}{2\pi}
+        e^{\frac{\ii}{\hbar}(\bm{p}\cdot(\bm{x}-\bm{x'}) - E(t-t'))} G(\bm{p},E)
+    \text{ .}
+\end{align}
+
+\newpar
+Fourier transforming \ref{eq:G-grand-canonical-greater-lesser} we can see that
+\begin{empheq}[box=\GreenBox]{align}
+    \label{eq:G-fourier-grand-canonical-greater-lesser}
+    G^<(\bm{p},E) = \zeta e^{-\beta(E-\mu)} G^>(\bm{p},E)
+    \text{ .}
+\end{empheq}
+
+\newpar
+It can also be shown that
+\begin{empheq}[box=\GreenBox]{align}
+    G^K(\bm{p},E) &= \Big(G^R(\bm{p},E) - G^A(\bm{p},E)\Big) \tanh^{-\zeta}\bigg(\frac{\beta E}{2}\bigg)
+\end{empheq}
+
+
+
+
+
+
+
+% --------------------------------------------------------------------------------
+\section{Generating functions}
+Another important aspect if Green's functions is that they can be obtained from the differentiation of a generating function.  In the case of the time-ordered Green's function we can introduce:
+\begin{align}
+    \label{eq:generating-function}
+    Z[\eta, \eta^*] = \braket{ \T{ \exp\Bigg[
+    \ii \int\d\bm{x} \int\d t \big(\psi_{\H}(\bm{x},t)\eta(\bm{x},t)
+            + \psi_{\H}\dagg(\bm{x},t)\eta^*(\bm{x},t)\big)
+    \Bigg]} }
+    \text{ ,}
+\end{align}
+\begin{align}
+    \label{eq:G-generating-function}
+    \Rightarrow G(\bm{x},t,\bm{x'},t')
+    = \ii \frac{\delta^2 Z[\eta, \eta^*]}{\delta\eta^*(\bm{x'},t') \delta\eta^*(\bm{x},t)} \Bigg|_{\eta=\eta^*=0}
+    = -\ii \braket{\T{ \psi_{\H}(\bm{x},t)\psi_{\H}\dagg(\bm{x'},t')}}
+    \text{ .}
+\end{align}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% --------------------------------------------------------------------------------
+\bibliographystyle{unsrt}
+\bibliography{bibliography}
+
+\end{document}

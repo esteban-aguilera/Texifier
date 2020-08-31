@@ -1,5 +1,5 @@
 """Example of how to use this file:
-python compile_math.py 'example.tex'
+python pytex.py example.tex -c -o
 """
 
 import argparse
